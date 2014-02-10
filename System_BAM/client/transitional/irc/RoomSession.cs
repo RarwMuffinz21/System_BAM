@@ -117,7 +117,7 @@ function RTBIC_RoomSession::onAdd(%this)
          horizSizing = "width";
          vertSizing = "top";
          position = "7 313";
-         extent = "429 22";
+         extent = "487 22";
          
          dSet = "window";
          dName = "inputContainer";
@@ -128,7 +128,7 @@ function RTBIC_RoomSession::onAdd(%this)
             horizSizing = "width";
             vertSizing = "height";
             position = "3 3";
-            extent = "423 16";
+            extent = "481 16";
             color = "255 255 255 255";
          };
          
@@ -137,7 +137,7 @@ function RTBIC_RoomSession::onAdd(%this)
             profile = GuiDefaultProfile;
             horizSizing = "left";
             vertSizing = "bottom";
-            position = "410 2";
+            position = "468 2";
             extent = "16 16";
             bitmap = $RTB::Path@"images/icons/bullet_go";
          };
@@ -146,7 +146,7 @@ function RTBIC_RoomSession::onAdd(%this)
             profile = "GuiDefaultProfile";
             horizSizing = "left";
             vertSizing = "bottom";
-            position = "410 2";
+            position = "468 2";
             extent = "16 16";
             command = %this@".send();";
             text = " ";
@@ -164,7 +164,7 @@ function RTBIC_RoomSession::onAdd(%this)
    %input.horizSizing = "width";
    %input.vertSizing = "bottom";
    %input.position = "1 3";
-   %input.extent = "407 16";
+   %input.extent = "465 16";
    %input.command = %this@".focus();";
    %input.altCommand = %this@".send();";
 
@@ -235,40 +235,36 @@ function RTBIC_RoomSession::send(%this)
 
       if (%first $= "/me" || %first $= "/action")
       {
-         %this.writeAction($RTB::CIRCClient::Cache::NickName,parseLinks(stripMLControlChars(%args)));
-         RTBIC_SC.sendLine("PRIVMSG" SPC %this.name SPC ":\c0ACTION " @ %args @ "\c0");
+         %this.writeAction(BAM_IRC.nick, parseLinks(stripMLControlChars(%args)));
+         BAM_IRC.sendMessage(%this.name, "ACTION", %args);
       }
       else if (%first $= "/msg")
       {
-         RTBIC_SC.sendLine("PRIVMSG" SPC %args);
-
          %name = firstWord(%args);
          %text = restWords(%args);
 
+         BAM_IRC.sendMessage(%name, %text);
+
          %session = RTBIC_SessionManager.getSession(%name);
-         %session.writeMessage($RTB::CIRCClient::Cache::NickName, %text);
+         %session.writeMessage(BAM_IRC.nick, parseLinks(stripMLControlChars(%text)));
       }
-      else if (%first $= "/nick")
+      else
       {
-         RTBIC_SC.sendLine("NICK" SPC %args);
-      }
-      else if (%first $= "/join")
-      {
-         RTBIC_SC.sendLine("JOIN" SPC %args);
+         BAM_IRC.sendCommand(strUpr(getSubStr(%first, 1, strLen(%first))), %args);
       }
    }
    else
    {
-      if (%this.manifest.getById($RTB::CIRCClient::Cache::NickName).rank > 0)
+      if (%this.manifest.getByID(BAM_IRC.nick).rank > 0)
       {
-         %this.writeRank("<color:FF6600>"@$RTB::CIRCClient::Cache::NickName,parseLinks(stripMLControlChars(%text)));
+         %this.writeRank("<color:FF6600>" @ BAM_IRC.nick, parseLinks(stripMLControlChars(%text)));
       }
       else
       {
-         %this.writeMessage("<color:FF6600>"@$RTB::CIRCClient::Cache::NickName,parseLinks(stripMLControlChars(%text)));
+         %this.writeMessage("<color:FF6600>" @ BAM_IRC.nick, parseLinks(stripMLControlChars(%text)));
       }
-
-      RTBIC_SC.sendLine("PRIVMSG" SPC %this.name SPC ":" @ %text);
+   
+      BAM_IRC.sendMessage(%this.name, %text);
    }
 
    %this.focus();

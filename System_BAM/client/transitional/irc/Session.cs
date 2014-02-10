@@ -213,38 +213,44 @@ function RTBIC_Session::send(%this)
 
       if (%first $= "/me" || %first $= "/action")
       {
-         %this.writeAction($RTB::CIRCClient::Cache::NickName, parseLinks(stripMLControlChars(%args)));
-         RTBIC_SC.sendLine("PRIVMSG" SPC %this.name SPC ":\c0ACTION " @ %args @ "\c0");
+         %this.writeAction(BAM_IRC.nick, parseLinks(stripMLControlChars(%args)));
+         BAM_IRC.sendMessage(%this.name, "ACTION", %args);
       }
       else if (%first $= "/msg")
       {
-         RTBIC_SC.sendLine("PRIVMSG" SPC %args);
-
          %name = firstWord(%args);
          %text = restWords(%args);
 
-         %session = RTBIC_SessionManager.getSession(%name);
-         %session.writeMessage($RTB::CIRCClient::Cache::NickName, %text);
+         BAM_IRC.sendMessage(%name, %text);
 
-         return;
+         %session = RTBIC_SessionManager.getSession(%name);
+         %session.writeMessage(BAM_IRC.nick, parseLinks(stripMLControlChars(%text)));
       }
-      else if (%first $= "/nick")
+      else
       {
-         RTBIC_SC.sendLine("NICK" SPC %args);
-      }
-      else if (%first $= "/join")
-      {
-         RTBIC_SC.sendLine("JOIN" SPC %args);
+         BAM_IRC.sendCommand(strUpr(getSubStr(%first, 1, strLen(%first))), %args);
       }
    }
    else
    {
-      %this.writeMessage($RTB::CIRCClient::Cache::NickName, parseLinks(stripMLControlChars(%text)));
-      RTBIC_SC.sendLine("PRIVMSG" SPC %this.name SPC ":" @ %text);
+      %this.writeMessage(BAM_IRC.nick, parseLinks(stripMLControlChars(%text)));
+      BAM_IRC.sendMessage(%this.name, %text);
    }
 
    %this.focus();
    %this.window.scroll.scrollToBottom();
+}
+
+function RTBIC_Session::receive(%this, %name, %text)
+{
+   if (firstWord(%text) $= "ACTION")
+   {
+      %this.writeAction(%name, restWords(%text));
+   }
+   else
+   {
+      %this.writeMessage(%name, %text);
+   }
 }
 
 function RTBIC_Session::writeMessage(%this,%sender,%message)

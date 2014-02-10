@@ -33,18 +33,18 @@ function RTBIC_RoomSessionManifest::addUser(%this,%id,%name,%rank,%icon,%blocked
 
 function RTBIC_RoomSessionManifest::addUserByNick(%this, %nick)
 {
-   %chars = "~@%&+";
+   %chars = "~&@%+";
 
    %rank["~"] = 3;
+   %rank["&"] = 3;
    %rank["@"] = 2;
    %rank["%"] = 2;
-   %rank["&"] = 1;
    %rank["+"] = 1;
 
    %icon["~"] = "shield_gold";
+   %icon["&"] = "shield_silver";
    %icon["@"] = "starS";
    %icon["%"] = "star0";
-   %icon["&"] = "token_16";
    %icon["+"] = "user";
 
    %rank = 0;
@@ -324,9 +324,9 @@ function RTBIC_RoomSessionManifestUser::openMenu(%this)
    %menuIcon[%menuItems++] = "comment";
    %menuText[%menuItems] = "Chat";
    %menuComm[%menuItems] = %this@".openChatWindow();";
-   %menuIcon[%menuItems++] = "information";
-   %menuText[%menuItems] = "Info";
-   %menuComm[%menuItems] = %this@".info();";
+   //%menuIcon[%menuItems++] = "information";
+   //%menuText[%menuItems] = "Info";
+   //%menuComm[%menuItems] = %this@".info();";
    // if(!RTBIC_Roster.hasID(%this.id) && !RTBIC_InviteRoster.hasID(%this.id))
    // {
    //    %menuIcon[%menuItems++] = "heart_add";
@@ -573,7 +573,7 @@ function RTBIC_RoomSessionManifestUser::addFriend(%this)
 //- RTBIC_RoomSessionManifestUser::kick (tries to kick a user)
 function RTBIC_RoomSessionManifestUser::kick(%this)
 {
-   RTBIC_SC.sendLine("kick" SPC %this.session.name SPC %this.id);
+   BAM_IRC.sendCommand("KICK", %this.session.name SPC %this.id);
    %this.closeMenu();
 }
 
