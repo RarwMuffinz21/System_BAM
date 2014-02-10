@@ -12,16 +12,16 @@ package BAM_ServerHandshakePackage
     }
 
     function GameConnection::autoAdminCheck(%this)
-	{
-		%parent = Parent::autoAdminCheck(%this);
+    {
+        %parent = Parent::autoAdminCheck(%this);
 
-		if (%this.bamClient)
-		{
-			commandToClient(%this, 'BAM_SendRevision', $RTB::Revision);
-		}
+        if (%this.bamClient)
+        {
+            commandToClient(%this, 'BAM_SendRevision', $RTB::Revision);
+        }
 
-		return %parent;
-	}
+        return %parent;
+    }
 };
 
 activatePackage("BAM_ServerHandshakePackage");

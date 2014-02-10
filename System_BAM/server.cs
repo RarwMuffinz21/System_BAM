@@ -27,7 +27,7 @@
 
 if (!isUnlocked())
 {
-	echo("\c2 - Skipping: BAM does not support Demo Mode.");
+    echo("\c2 - Skipping: BAM does not support Demo Mode.");
     return;
 }
 
@@ -35,7 +35,7 @@ exec("./shared.cs");
 
 if ($BAM::Debug)
 {
-	warn("WARNING: BAM debug enabled (level " @ $BAM::Debug @ ")");
+    warn("WARNING: BAM debug enabled (level " @ $BAM::Debug @ ")");
 }
 
 // Load server modules
