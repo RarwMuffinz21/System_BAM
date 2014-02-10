@@ -41,3 +41,11 @@ if ($BAM::Debug)
 // Load client modules
 exec("./client/handshake.cs");
 exec("./client/overlay.cs");
+
+// Load transitional client modules
+exec("./client/transitional/transitional.cs");
+exec("./client/transitional/functions.cs");
+exec("./client/transitional/gui.cs");
+exec("./client/transitional/profiles/generic.cs");
+exec("./client/transitional/profiles/connectClient.cs");
+exec("./client/transitional/irc/irc.cs");

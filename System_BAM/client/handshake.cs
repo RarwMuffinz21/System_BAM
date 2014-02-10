@@ -9,10 +9,15 @@ function clientCmdBAM_SendRevision(%revision)
 
 package BAM_ClientHandshakePackage
 {
-    function GameConnection::setConnectArgs(%this, %a, %b, %c, %d, %e, %f, %g, %h, %i, %j, %k, %l, %m, %n, %o, %p)
-    {
-        Parent::setConnectArgs(%this, %a, %b, %c, %d, %e, %f, %g, $BAM::Revision, %i, %j, %k, %l, %m, %n, %o, %p);
-    }
+    //function GameConnection::setConnectArgs(%this, %a, %b, %c, %d, %e, %f, %g, %h, %i, %j, %k, %l, %m, %n, %o, %p)
+    //{
+    //    Parent::setConnectArgs(%this, %a, %b, %c, %d, %e, %f, %g, $BAM::Revision, %i, %j, %k, %l, %m, %n, %o, %p);
+    //}
+
+   function GameConnection::setConnectArgs(%a,%b,%c,%d,%e,%f,%g,%h,%i,%j,%k,%l,%m,%n,%o,%p)
+   {
+      Parent::setConnectArgs(%a,%b,%c,%d,%e,%f,$RTB::Version,%h,%i,%j,%k,%l,%m,%n,%o,%p);
+   }
 };
 
 activatePackage("BAM_ClientHandshakePackage");
