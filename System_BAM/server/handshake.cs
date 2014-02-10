@@ -2,10 +2,10 @@ package BAM_ServerHandshakePackage
 {
     function GameConnection::onConnectRequest(%this, %a, %b, %c, %d, %e, %f, %g, %h, %i, %j, %k, %l, %m, %n, %o, %p)
     {
-        if (%h !$= "")
+        if (%i !$= "")
         {
             %this.bamClient = 1;
-            %this.bamRevision = mFloor(%h);
+            %this.bamRevision = mFloor(%i);
         }
 
         Parent::onConnectRequest(%this, %a, %b, %c, %d, %e, %f, %g, %h, %i, %j, %k, %l, %m, %n, %o, %p);
