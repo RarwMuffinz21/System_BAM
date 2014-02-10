@@ -33,13 +33,7 @@ function RTBIC_RoomSessionManifest::addUser(%this,%id,%name,%rank,%icon,%blocked
 
 function RTBIC_RoomSessionManifest::addUserByNick(%this, %nick)
 {
-   %chars = "~&@%+";
-
-   %rank["~"] = 3;
-   %rank["&"] = 3;
-   %rank["@"] = 2;
-   %rank["%"] = 2;
-   %rank["+"] = 1;
+   %icon = "status_online";
 
    %icon["~"] = "shield_gold";
    %icon["&"] = "shield_silver";
@@ -47,19 +41,12 @@ function RTBIC_RoomSessionManifest::addUserByNick(%this, %nick)
    %icon["%"] = "star0";
    %icon["+"] = "user";
 
-   %rank = 0;
-   %icon = "status_online";
-
    %first = getSubStr(%nick, 0, 1);
+   %index = strPos("+%@&~", %first);
 
-   if (strPos(%chars, %first) != -1)
+   if (%index != -1)
    {
       %nick = getSubStr(%nick, 1, strLen(%nick));
-
-      if (%rank[%first] !$= "")
-      {
-         %rank = %rank[%first];
-      }
 
       if (%icon[%first] !$= "")
       {
@@ -67,7 +54,7 @@ function RTBIC_RoomSessionManifest::addUserByNick(%this, %nick)
       }
    }
 
-   return %this.addUser(%nick, %nick, %rank, %icon, 0);
+   return %this.addUser(%nick, %nick, %index + 1, %icon, 0);
 }
 
 //- RTBIC_RoomSessionManifest::hasUser (checks if manifest contains user)
@@ -118,7 +105,7 @@ function RTBIC_RoomSessionManifest::sort(%this)
    if(%this.getCount() <= 0)
       return;
       
-   for(%i=3;%i>=0;%i--)
+   for(%i=5;%i>=0;%i--)
    {
       %sorter = new GuiTextListCtrl();
       for(%j=0;%j<%this.getCount();%j++)
