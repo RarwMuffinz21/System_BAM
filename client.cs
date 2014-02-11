@@ -46,6 +46,10 @@ exec("./client/handshake.cs");
 exec("./client/colorsets.cs");
 exec("./client/overlay.cs");
 
+// Tests
+exec("./client/gui/profiles.cs");
+exec("./client/gui/serverControl.cs");
+
 // Load transitional client modules
 exec("./client/transitional/transitional.cs");
 exec("./client/transitional/functions.cs");
