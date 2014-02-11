@@ -4,6 +4,8 @@ function clientCmdBAM_SendRevision(%revision)
     {
         ServerConnection.bamServer = 1;
         ServerConnection.bamRevision = mFloor(%revision);
+
+        echo("Server is running BAM r" @ ServerConnection.bamRevision);
     }
 }
 

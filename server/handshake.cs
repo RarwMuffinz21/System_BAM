@@ -1,6 +1,6 @@
 package BAM_ServerHandshakePackage
 {
-    function GameConnection::onConnectRequest(%this, %a, %b, %c, %d, %e, %f, %g, %h, %i, %j, %k, %l, %m, %n, %o, %p)
+    function GameConnection::onConnectRequest(%this,%a,%b,%c,%d,%e,%f,%g,%h,%i,%j,%k,%l,%m,%n,%o,%p)
     {
         if (%i !$= "")
         {
@@ -8,7 +8,7 @@ package BAM_ServerHandshakePackage
             %this.bamRevision = mFloor(%i);
         }
 
-        Parent::onConnectRequest(%this, %a, %b, %c, %d, %e, %f, %g, %h, %i, %j, %k, %l, %m, %n, %o, %p);
+        Parent::onConnectRequest(%this,%a,%b,%c,%d,%e,%f,%g,%h,%i,%j,%k,%l,%m,%n,%o,%p);
     }
 
     function GameConnection::autoAdminCheck(%this)
@@ -17,7 +17,8 @@ package BAM_ServerHandshakePackage
 
         if (%this.bamClient)
         {
-            commandToClient(%this, 'BAM_SendRevision', $RTB::Revision);
+            echo(" +- running BAM r" @ %this.bamRevision);
+            commandToClient(%this, 'BAM_SendRevision', $BAM::Revision);
         }
 
         return %parent;
