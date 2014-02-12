@@ -1,4 +1,4 @@
-package BAM_ServerHandshakePackage
+package BAMS_HandshakePackage
 {
     function GameConnection::onConnectRequest(%this,%a,%b,%c,%d,%e,%f,%g,%h,%i,%j,%k,%l,%m,%n,%o,%p)
     {
@@ -25,4 +25,4 @@ package BAM_ServerHandshakePackage
     }
 };
 
-activatePackage("BAM_ServerHandshakePackage");
+activatePackage("BAMS_HandshakePackage");

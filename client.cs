@@ -38,17 +38,18 @@ if ($BAM::Debug)
     warn("WARNING: BAM debug enabled (level " @ $BAM::Debug @ ")");
 }
 
-// Load miscellaneous support
+// Miscellaneous support
 exec("./support/files.cs");
 
-// Load client modules
-exec("./client/handshake.cs");
-exec("./client/colorsets.cs");
-exec("./client/overlay.cs");
-
-// Tests
+// Client GUIs
 exec("./client/gui/profiles.cs");
 exec("./client/gui/serverControl.cs");
+
+// Client modules
+exec("./client/handshake.cs");
+exec("./client/overlay.cs");
+exec("./client/colorsetManager.cs");
+exec("./client/serverControl.cs");
 
 // Load transitional client modules
 exec("./client/transitional/transitional.cs");

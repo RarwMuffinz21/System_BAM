@@ -285,13 +285,13 @@ function CustomGameGui::previewColorSet(%this, %file)
     CustomGameGui_ColorsetPreview.position = %xpos SPC %ypos;
 }
 
-package BAM_ColorsetPackage
+package BAMC_ColorsetManagerPackage
 {
     // Create controls for selecting and previewing colorsets.
     function CustomGameGui::onRender(%this)
     {
         Parent::onRender(%this);
-        %this.selectedColorSet = "";
+        %this.selectedColorset = "";
 
         CustomGameGui_ColorsetSwatch.clear();
         CustomGameGui_ColorsetPreview.clear();
@@ -302,7 +302,7 @@ package BAM_ColorsetPackage
 
             if (fileMatch(%colorSet, "config/server/colorSet.txt"))
             {
-                %this.selectedColorSet = %colorSet;
+                %this.selectedColorset = %colorSet;
                 break;
             }
         }
@@ -316,7 +316,7 @@ package BAM_ColorsetPackage
                 profile = "ImpactCheckProfile";
                 group = 1;
 
-                command = "CustomGameGui.selectedColorSet=\"config/server/colorSet.txt\";CustomGameGui.previewColorSet(\"config/server/colorSet.txt\");";
+                command = "CustomGameGui.selectedColorset=\"config/server/colorSet.txt\";CustomGameGui.previewColorset(\"config/server/colorSet.txt\");";
             };
 
             CustomGameGui_ColorsetSwatch.add(%ctrl);
@@ -341,7 +341,7 @@ package BAM_ColorsetPackage
                 profile = "ImpactCheckProfile";
                 group = 1;
 
-                command = "CustomGameGui.selectedColorSet=\"" @ %file @ "\";CustomGameGui.previewColorSet(\"" @ %file @ "\");";
+                command = "CustomGameGui.selectedColorset=\"" @ %file @ "\";CustomGameGui.previewColorset(\"" @ %file @ "\");";
             };
 
             CustomGameGui_ColorsetSwatch.add(%ctrl);
@@ -383,9 +383,9 @@ package BAM_ColorsetPackage
     {
         Parent::clickSelect(%this);
 
-        if (isFile(%this.selectedColorSet))
+        if (isFile(%this.selectedColorset))
         {
-            if (!fileCopyManual(%this.selectedColorSet, "config/server/colorSet.txt"))
+            if (!fileCopyManual(%this.selectedColorset, "config/server/colorSet.txt"))
             {
                 messageBoxOK("Error", "The selected colorset could not be applied.");
             }
@@ -393,9 +393,9 @@ package BAM_ColorsetPackage
     }
 };
 
-activatePackage("BAM_ColorsetPackage");
+activatePackage("BAMC_ColorsetManagerPackage");
 
-if (!isObject(CustomGameGui_ColorSetButton))
+if (!isObject(CustomGameGui_ColorsetButton))
 {
     createColorsetGUI();
 }

@@ -1,91 +1,97 @@
-if (isObject(ServerControlWindow))
+if (isObject(ServerControlGui))
 {
-	ServerControlWindow.delete();
+	ServerControlGui.delete();
 }
 
-new GuiWindowCtrl(ServerControlWindow)
+new GuiControl(ServerControlGui)
 {
-	profile = BAMWindowProfile;
-	extent = "800 600";
-
-	canMaximize = 0;
-	canMinimize = 0;
-
-	resizeWidth = 0;
-	resizeHeight = 0;
-
-	text = "Server Control";
-
-	new GuiSwatchCtrl()
+	new GuiWindowCtrl()
 	{
-		position = "3 39";
-		extent = "794 40";
+		profile = BAMWindowProfile;
+		extent = "800 600";
 
-		color = "238 238 238 255";
+		vertSizing = "center";
+		horizSizing = "center";
 
-		new GuiBitmapButtonCtrl()
+		canMaximize = 0;
+		canMinimize = 0;
+
+		resizeWidth = 0;
+		resizeHeight = 0;
+
+		text = "Server Control";
+
+		new GuiSwatchCtrl()
 		{
-			profile = GuiCenterProfile;
+			position = "3 39";
+			extent = "794 40";
 
-			position = "0 0";
-			extent = "60 40";
+			color = "238 238 238 255";
 
-			bitmap = "Add-Ons/System_BAM/resources/images/white";
-			text = "Main";
+			new GuiBitmapButtonCtrl()
+			{
+				profile = GuiCenterProfile;
 
-			mColor = "221 221 221 255";
-		};
+				position = "0 0";
+				extent = "60 40";
 
-		new GuiBitmapButtonCtrl()
-		{
-			profile = GuiCenterProfile;
+				bitmap = "Add-Ons/System_BAM/resources/images/white";
+				text = "Main";
 
-			position = "60 0";
-			extent = "81 40";
+				mColor = "221 221 221 255";
+			};
 
-			bitmap = "Add-Ons/System_BAM/resources/images/white";
-			text = "Settings";
+			new GuiBitmapButtonCtrl()
+			{
+				profile = GuiCenterProfile;
 
-			mColor = "0 0 0 0";
-		};
+				position = "60 0";
+				extent = "81 40";
 
-		new GuiBitmapButtonCtrl()
-		{
-			profile = GuiCenterProfile;
+				bitmap = "Add-Ons/System_BAM/resources/images/white";
+				text = "Settings";
 
-			position = "141 0";
-			extent = "119 40";
+				mColor = "0 0 0 0";
+			};
 
-			bitmap = "Add-Ons/System_BAM/resources/images/white";
-			text = "Administration";
+			new GuiBitmapButtonCtrl()
+			{
+				profile = GuiCenterProfile;
 
-			mColor = "0 0 0 0";
-		};
+				position = "141 0";
+				extent = "119 40";
 
-		new GuiBitmapButtonCtrl()
-		{
-			profile = GuiCenterProfile;
+				bitmap = "Add-Ons/System_BAM/resources/images/white";
+				text = "Administration";
 
-			position = "260 0";
-			extent = "106 40";
+				mColor = "0 0 0 0";
+			};
 
-			bitmap = "Add-Ons/System_BAM/resources/images/white";
-			text = "Permissions";
+			new GuiBitmapButtonCtrl()
+			{
+				profile = GuiCenterProfile;
 
-			mColor = "0 0 0 0";
-		};
+				position = "260 0";
+				extent = "106 40";
 
-		new GuiBitmapButtonCtrl()
-		{
-			profile = GuiCenterProfile;
+				bitmap = "Add-Ons/System_BAM/resources/images/white";
+				text = "Permissions";
 
-			position = "366 0";
-			extent = "61 40";
+				mColor = "0 0 0 0";
+			};
 
-			bitmap = "Add-Ons/System_BAM/resources/images/white";
-			text = "Logs";
+			new GuiBitmapButtonCtrl()
+			{
+				profile = GuiCenterProfile;
 
-			mColor = "0 0 0 0";
+				position = "366 0";
+				extent = "61 40";
+
+				bitmap = "Add-Ons/System_BAM/resources/images/white";
+				text = "Logs";
+
+				mColor = "0 0 0 0";
+			};
 		};
 	};
 };

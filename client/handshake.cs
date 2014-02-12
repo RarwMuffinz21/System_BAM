@@ -9,7 +9,7 @@ function clientCmdBAM_SendRevision(%revision)
     }
 }
 
-package BAM_ClientHandshakePackage
+package BAMC_HandshakePackage
 {
     function GameConnection::setConnectArgs(%a,%b,%c,%d,%e,%f,%g,%h,%i,%j,%k,%l,%m,%n,%o,%p)
     {
@@ -17,4 +17,4 @@ package BAM_ClientHandshakePackage
     }
 };
 
-activatePackage("BAM_ClientHandshakePackage");
+activatePackage("BAMC_HandshakePackage");
