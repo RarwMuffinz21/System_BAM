@@ -535,7 +535,7 @@ function Event_UserListMenu::onMouseUp(%this)
 //- RTBIC_RoomSessionManifestUser::openChatWindow (opens chat window with user)
 function RTBIC_RoomSessionManifestUser::openChatWindow(%this)
 {
-   RTBIC_SessionManager.getSession(%this.id);
+   BAM_IRCSessionGroup.get(%this.id, 1);
    %this.closeMenu();
 }
 

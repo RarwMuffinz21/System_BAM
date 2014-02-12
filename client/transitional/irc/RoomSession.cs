@@ -247,7 +247,7 @@ function RTBIC_RoomSession::send(%this)
 
             BAM_IRC.sendMessage(%name, %text);
 
-            %session = RTBIC_SessionManager.getSession(%name);
+            %session = BAM_IRCSessionGroup.get(%name, 1);
             %session.writeMessage(BAM_IRC.nick, parseLinks(stripMLControlChars(%text)));
         }
         else

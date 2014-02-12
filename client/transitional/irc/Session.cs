@@ -1,6 +1,172 @@
-function RTBIC_Session::onAdd(%this)
+function BAM_IRCSessionGroup::get(%this, %name, %create)
 {
-    %this.window = %window = new GuiWindowCtrl()
+    %count = %this.getCount();
+
+    for (%i = 0; %i < %count; %i++)
+    {
+        %session = %this.getObject(%i);
+
+        if (%session.name $= %name)
+        {
+            return %session;
+        }
+    }
+
+    if (!%create)
+    {
+        return 0;
+    }
+
+    %session = new ScriptObject()
+    {
+        class = BAM_IRCSession;
+        name = %name;
+    };
+
+    %this.add(%session);
+    return %session;
+}
+
+if (!isObject(BAM_IRCSessionGroup))
+{
+    new ScriptGroup(BAM_IRCSessionGroup);
+}
+
+function BAM_IRCSession::onAdd(%this)
+{
+    %window = %this.createWindow();
+    %input = BAM_InputRecycler.acquire();
+
+    // We may have run out of input controls
+    if (%input)
+    {
+        %window.getObject(1).add(%input);
+        %window.input = %input;
+
+        // Replace this!
+        %input.setProfile(RTB_TextEditProfile);
+        %input.altCommand = %this @ ".sendMessage();";
+
+        %input.position = "1 3";
+        %input.extent = "264 16";
+
+        %input.horizSizing = "width";
+        %input.vertSizing = "bottom";
+    }
+    else
+    {
+        // Warn the user about the missing input
+        %text = "<font:Verdana Bold:12><color:FF0000>";
+        %text = %text @ "ERROR: BAM has run out of input controls.";
+        %text = %text @ " Close a few sessions.";
+
+        %this.schedule(0, addLine, %text);
+    }
+
+    // Find controls
+    %window.scroll = %window.getObject(0).getObject(0).getObject(0);
+    %window.text = %window.scroll.getObject(0);
+
+    // Determine the best place to put the window
+    %count = BAM_IRCSessionGroup.getCount();
+
+    for (%i = 0; %i < 50; %i++)
+    {
+        %position = %i * 40 SPC %i * 40;
+
+        for (%j = 0; %j < %count; %j++)
+        {
+            %session = BAM_IRCSessionGroup.getObject(%j);
+
+            if (%session != %this && %session.window.position $= %position)
+            {
+                break;
+            }
+        }
+
+        if (%j == %count)
+        {
+            break;
+        }
+    }
+
+    %this.window.position = %position;
+}
+
+function BAM_IRCSession::onRemove(%this)
+{
+    if (isObject(%this.window.input))
+    {
+        // Make sure to give back the input we acquired
+        BAM_InputRecycler.release(%this.window.input);
+    }
+
+    if (isObject(%this.window))
+    {
+        %this.window.delete();
+    }
+}
+
+function BAM_IRCSession::addLine(%this, %line)
+{
+    %scroll = %this.window.scroll;
+    %text = %this.window.text;
+
+    // This needs to be persisted
+    %y = getWord(%text.position, 1);
+
+    // Determine this now so future modifications can be done
+    %bottom = getWord(%text.extent, 1) + %y <= getWord(%scroll.extent, 1) - 1;
+    %value = %text.getValue();
+
+    // Append with \n if text present, set otherwise
+    %text.setValue(%value @ (%value $= "" ? "" : "\n") @ %line);
+
+    // ::forceReflow errors for non-awake controls
+    if (BAM_Overlay.isAwake())
+    {
+        %text.forceReflow();
+    }
+
+    // Required for ::scrollToBottom to respond correctly
+    %text.setCursorPosition(strLen(%text.getValue()));
+
+    if (%bottom)
+    {
+        %scroll.scrollToBottom();
+    }
+    else
+    {
+        %text.resize(
+            getWord(%text.position, 0),
+            %y,
+            getWord(%text.extent, 0),
+            getWord(%text.extent, 1)
+        );
+    }
+}
+
+function BAM_IRCSession::sendMessage(%this)
+{
+    %text = %this.window.input.getValue();
+
+    if (%text $= "")
+    {
+        return;
+    }
+
+    BAM_IRC.sendMessage(%this.name, %text);
+
+    %this.window.input.setValue("");
+    %this.window.input.makeFirstResponder(1);
+
+    %this.window.scroll.scrollToBottom();
+}
+
+function BAM_IRCSession::createWindow(%this)
+{
+    // Replace this!
+    %this.window = new GuiWindowCtrl()
     {
         session = %this;
         profile = GuiWindowProfile;
@@ -39,7 +205,7 @@ function RTBIC_Session::onAdd(%this)
                     horizSizing = "width";
                     vertSizing = "height";
                     position = "1 1";
-                    extent = "279 119";
+                    extent = "279 132";
                     hScrollBar = "alwaysOff";
 
                     new GuiMLTextCtrl()
@@ -50,16 +216,6 @@ function RTBIC_Session::onAdd(%this)
                         position = "1 1";
                         extent = "265 84";
                     };
-                };
-                new GuiMLTextCtrl()
-                {
-                    profile = GuiDefaultProfile;
-                    horizSizing = "right";
-                    vertSizing = "top";
-                    position = "2 120";
-                    extent = "280 14";
-
-                    selectable = false;
                 };
             };
         };
@@ -98,204 +254,12 @@ function RTBIC_Session::onAdd(%this)
                 vertSizing = "bottom";
                 position = "268 2";
                 extent = "16 16";
-                command = %this @ ".send();";
+                command = %this @ ".sendMessage();";
                 text = " ";
             };
         };
     };
 
-    BAM_Overlay.add(%window);
-
-    %input = BAM_InputRecycler.acquire();
-    %input.setProfile(RTB_TextEditProfile);
-
-    %input.horizSizing = "width";
-    %input.vertSizing = "bottom";
-    %input.position = "1 3";
-    %input.extent = "264 16";
-    %input.altCommand = %this @ ".send();";
-
-    %window.getObject(1).add(%input);
-
-    %window.scrollContainer = %window.getObject(0);
-    %window.scroll = %window.scrollContainer.getObject(0).getObject(0);
-    %window.status = %window.scrollContainer.getObject(0).getObject(1);
-    %window.display = %window.scroll.getObject(0);
-    %window.input = %input;
-
-    %offset = 0;
-    %position = "0 0";
-
-    while(%free !$= true)
-    {
-        %free = true;
-        for(%i=0;%i<RTBIC_SessionManager.getCount();%i++)
-        {
-            %session = RTBIC_SessionManager.getObject(%i);
-            if(%session $= %this)
-                continue;
-
-            if(%session.window.position $= %position)
-            {
-                %free = false;
-                break;
-            }
-        }
-
-        if(%free !$= true)
-        {
-            %offset += 40;
-            %position = %offset SPC %offset;
-        }
-    }
-
-    %this.window.position = %position;
-}
-
-function RTBIC_Session::onRemove(%this)
-{
-    if (isObject(%this.window.input))
-    {
-        BAM_InputRecycler.release(%this.window.input);
-    }
-
-    if (isObject(%this.window))
-    {
-        %this.window.delete();
-    }
-}
-
-function RTBIC_Session::focus(%this)
-{
-    BAM_Overlay.pushToBack(%this.window);
-    %this.window.input.makeFirstResponder(1);
-}
-
-function RTBIC_Session::write(%this, %line)
-{
-    %scroll = %this.window.scroll;
-    %display = %this.window.display;
-
-    %position = getWord(%display.position,1);
-    if((getWord(%display.extent,1)+getWord(%display.position,1)) <= (getWord(%scroll.extent,1)-1))
-        %atBottom = true;
-
-    if(%display.getValue() $= "")
-        %display.setValue(%line);
-    else
-        %display.setValue(%display.getValue()@"\n"@%line);
-
-    if(BAM_Overlay.isAwake())
-        %display.forceReflow();
-
-    %display.setCursorPosition(strLen(%display.getValue()));
-
-    if(%atBottom)
-        %scroll.scrollToBottom();
-    else
-        %display.resize(getWord(%display.position,0),%position,getWord(%display.extent,0),getWord(%display.extent,1));
-}
-
-function RTBIC_Session::send(%this)
-{
-    %text = %this.window.input.getValue();
-
-    if (%text $= "")
-    {
-        return;
-    }
-
-    %this.window.input.setValue("");
-
-    if (getSubStr(%text,0,1) $= "/")
-    {
-        %first = firstWord(%text);
-        %args = restWords(%text);
-
-        if (%first $= "/me" || %first $= "/action")
-        {
-            %this.writeAction(BAM_IRC.nick, parseLinks(stripMLControlChars(%args)));
-            BAM_IRC.sendMessage(%this.name, "ACTION", %args);
-        }
-        else if (%first $= "/msg")
-        {
-            %name = firstWord(%args);
-            %text = restWords(%args);
-
-            BAM_IRC.sendMessage(%name, %text);
-
-            %session = RTBIC_SessionManager.getSession(%name);
-            %session.writeMessage(BAM_IRC.nick, parseLinks(stripMLControlChars(%text)));
-        }
-        else
-        {
-            BAM_IRC.sendCommand(strUpr(getSubStr(%first, 1, strLen(%first))), %args);
-        }
-    }
-    else
-    {
-        %this.writeMessage(BAM_IRC.nick, parseLinks(stripMLControlChars(%text)));
-        BAM_IRC.sendMessage(%this.name, %text);
-    }
-
-    %this.focus();
-    %this.window.scroll.scrollToBottom();
-}
-
-function RTBIC_Session::receive(%this, %name, %text)
-{
-    if (firstWord(%text) $= "ACTION")
-    {
-        %this.writeAction(%name, restWords(%text));
-    }
-    else
-    {
-        %this.writeMessage(%name, %text);
-    }
-}
-
-function RTBIC_Session::writeMessage(%this,%sender,%message)
-{
-    %message = "<font:Verdana Bold:12>"@%sender@"<font:Verdana:12>: "@%message;
-    
-    if(RTBCO_getPref("CC::ShowTimestamps"))
-        %message = "<font:Verdana Bold:12>["@getSubStr(getWord(getDateTime(),1),0,8)@"] " @ %message;
-        
-    %this.write(%message);
-}
-
-function RTBIC_Session::writeAction(%this,%sender,%message)
-{
-    %message = "<font:Verdana Bold:12><color:CC00CC>* "@%sender@" <font:Verdana:12>"@%message@"<color:444444>";
-    
-    if(RTBCO_getPref("CC::ShowTimestamps"))
-        %message = "<font:Verdana Bold:12>["@getSubStr(getWord(getDateTime(),1),0,8)@"] " @ %message;
-    
-    %this.write(%message);
-}
-
-function RTBIC_Session::writeNotice(%this,%message)
-{
-    %message = "<font:Verdana:12><color:666666>* "@%message@"<color:444444>";
-    
-    if(RTBCO_getPref("CC::ShowTimestamps"))
-        %message = "<font:Verdana Bold:12>["@getSubStr(getWord(getDateTime(),1),0,8)@"] " @ %message;
-    
-    %this.write(%message);
-}
-
-function RTBIC_Session::writeInfo(%this,%message)
-{
-    %message = "<font:Verdana:12><color:00AA00>* "@%message@"<color:444444>";
-    
-    if(RTBCO_getPref("CC::ShowTimestamps"))
-        %message = "<font:Verdana Bold:12>["@getSubStr(getWord(getDateTime(),1),0,8)@"] " @ %message;
-    
-    %this.write(%message);
-}
-
-function RTBIC_Session::writeError(%this,%message)
-{
-    %message = "<color:FF0000>* "@%message@"<color:444444>";
-    %this.write(%message);
+    BAM_Overlay.add(%this.window);
+    return %this.window;
 }
