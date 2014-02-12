@@ -166,7 +166,6 @@ function RTBIC_RoomSession::onAdd(%this)
     %input.vertSizing = "bottom";
     %input.position = "1 3";
     %input.extent = "465 16";
-    %input.command = %this@".focus();";
     %input.altCommand = %this@".send();";
 
     %window.input = %input;
@@ -225,51 +224,11 @@ function RTBIC_RoomSession::send(%this)
         return;
     }
 
-    RTBIC_RoomSessionManager.lastFocus = %this;
-    RTBIC_RoomSessionManager.lastFocusTime = getSimTime();
+    BAM_IRC.sendMessage(%this.name, %text);
 
     %this.window.input.setValue("");
+    %this.window.input.makeFirstResponder(1);
 
-    if (getSubStr(%text, 0, 1) $= "/")
-    {
-        %first = firstWord(%text);
-        %args = restWords(%text);
-
-        if (%first $= "/me" || %first $= "/action")
-        {
-            %this.writeAction(BAM_IRC.nick, parseLinks(stripMLControlChars(%args)));
-            BAM_IRC.sendMessage(%this.name, "ACTION", %args);
-        }
-        else if (%first $= "/msg")
-        {
-            %name = firstWord(%args);
-            %text = restWords(%args);
-
-            BAM_IRC.sendMessage(%name, %text);
-
-            %session = BAM_IRCSessionGroup.get(%name, 1);
-            %session.writeMessage(BAM_IRC.nick, parseLinks(stripMLControlChars(%text)));
-        }
-        else
-        {
-            BAM_IRC.sendCommand(strUpr(getSubStr(%first, 1, strLen(%first))), %args);
-        }
-    }
-    else
-    {
-        if (%this.manifest.getByID(BAM_IRC.nick).rank > 0)
-        {
-            %this.writeRank("<color:FF6600>" @ BAM_IRC.nick, parseLinks(stripMLControlChars(%text)));
-        }
-        else
-        {
-            %this.writeMessage("<color:FF6600>" @ BAM_IRC.nick, parseLinks(stripMLControlChars(%text)));
-        }
-    
-        BAM_IRC.sendMessage(%this.name, %text);
-    }
-
-    %this.focus();
     %this.window.scroll.scrollToBottom();
 }
 
@@ -381,12 +340,6 @@ function RTBIC_RoomSession::write(%this,%line)
         %scroll.scrollToBottom();
     else
         %display.resize(getWord(%display.position,0),%position,getWord(%display.extent,0),getWord(%display.extent,1));
-}
-
-function RTBIC_RoomSession::focus(%this)
-{
-    BAM_Overlay.pushToBack(%this.window);
-    %this.window.input.makeFirstResponder(1);
 }
 
 function RTBIC_RoomSession::registerPointers(%this, %parent)

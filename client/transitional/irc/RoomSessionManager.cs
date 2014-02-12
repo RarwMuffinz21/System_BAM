@@ -47,19 +47,3 @@ function RTBIC_RoomSessionManager::getSession(%this, %name, %search)
 
    return %session;
 }
-
-function RTBIC_RoomSessionManager::resetCursor(%this)
-{
-   if (isObject(%this.lastFocus) && %this.isMember(%this.lastFocus))
-   {
-      %this.lastFocus.focus();
-   }
-   else if (%this.getCount())
-   {
-      for (%i = %this.getCount() - 1; %i >= 0; %i--)
-      {
-         %this.getObject(%i).focus();
-         break;
-      }
-   }
-}
