@@ -1,77 +1,40 @@
-function RTBIC_createInputRecycler()
+function BAM_InputRecycler::onAdd(%this)
 {
-   if(isObject(RTBIC_InputRecycler))
-   {
-      echo("\c2ERROR: Cannot destroy input recycler!");
-      return RTBIC_InputRecycler;
-   }
-
-   %recycler = new GuiSwatchCtrl(RTBIC_InputRecycler)
-   {
-      visible = 0;
-   };
-
-   %recycler.populate(50);
-   return %recycler;
+    for (%i = 0; %i < 50; %i++)
+    {
+        %this.add(new GuiTextEditCtrl()
+        {
+            historySize = 32;
+            accelerator = "return";
+        });
+    }
 }
 
-function RTBIC_InputRecycler::get(%this)
+function BAM_InputRecycler::acquire(%this)
 {
-   if (%this.getCount())
-   {
-      %input = %this.getObject(0);
-      %input.setValue("");
+    if (%this.getCount())
+    {
+        %control = %this.getObject(0);
+        %this.remove(%control);
 
-      return %input;
-   }
-   else
-   {
-      echo("\c2ERROR: Unable to allocate free input object!");
-      return 0;
-   }
+        return %control;
+    }
+
+    return 0;
 }
 
-function RTBIC_InputRecycler::reclaim(%this, %input)
+function BAM_InputRecycler::release(%this, %control)
 {
-   if (!isObject(%input))
-   {
-      return 0;
-   }
-   
-   %input.setValue("");
-   %input.command = "";
-   %input.altCommand = "";
+    %control.command = "";
+    %control.altCommand = "";
 
-   %this.add(%input);
-   return true;
+    %control.setProfile(GuiDefaultProfile);
+    %control.setValue("");
+
+    %this.add(%control);
 }
 
-function RTBIC_InputRecycler::populate(%this, %amount)
+if (!isObject(BAM_InputRecycler))
 {
-   if (%this.getCount())
-   {
-      echo("\c2ERROR: Cannot re-populate input recycler!");
-      return 0;
-   }
-
-   for (%i = 0; %i < %amount; %i++)
-   {
-      %input = new GuiTextEditCtrl()
-      {
-         profile = RTB_TextEditProfile;
-         horizSizing = "right";
-         vertSizing = "bottom";
-         position = "0 0";
-         extent = "64 16";
-         maxLength = "255";
-         command = "";
-         altCommand = "";
-         accelerator = "return";
-         historySize = 32;
-      };
-
-      %this.add(%input);
-   }
-
-   return %this.getCount() == %amount;
+    new GuiSwatchCtrl(BAM_InputRecycler);
 }

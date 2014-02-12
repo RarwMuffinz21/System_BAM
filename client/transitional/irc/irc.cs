@@ -417,11 +417,6 @@ exec("./RoomSessionManifest.cs");
 exec("./Session.cs");
 exec("./SessionManager.cs");
 
-if (!isObject(RTBIC_InputRecycler))
-{
-   RTBIC_createInputRecycler();
-}
-
 if (!isObject(RTBIC_RoomSessionManager))
 {
    RTBIC_createRoomSessionManager();

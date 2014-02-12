@@ -105,7 +105,9 @@ function RTBIC_Session::onAdd(%this)
    };
 
    BAM_Overlay.add(%window);
-   %input = RTBIC_InputRecycler.get();
+
+   %input = BAM_InputRecycler.acquire();
+   %input.setProfile(RTB_TextEditProfile);
 
    %input.horizSizing = "width";
    %input.vertSizing = "bottom";

@@ -159,8 +159,9 @@ function RTBIC_RoomSession::onAdd(%this)
    %window.session = %this;
    %this.registerPointers(%window);
 
-   %input = RTBIC_InputRecycler.get();
-   %window.getObject(2).add(%input);
+   %input = BAM_InputRecycler.acquire();
+   %input.setProfile(RTB_TextEditProfile);
+
    %input.horizSizing = "width";
    %input.vertSizing = "bottom";
    %input.position = "1 3";
@@ -169,6 +170,8 @@ function RTBIC_RoomSession::onAdd(%this)
    %input.altCommand = %this@".send();";
 
    %window.input = %input;
+
+   %window.getObject(2).add(%input);
    %window.userPane.setVisible(true);
 
    %offset = 0;
