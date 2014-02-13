@@ -210,7 +210,7 @@ function BAM_IRC::onCommandNICK(%this, %prefix, %params)
         %text = %old SPC "changed their name to" SPC %new;
     }
 
-    %session = BAM_IRCSessionGroup.getSession(%old);
+    %session = BAM_IRCSessionGroup.get(%old);
 
     if (%session)
     {
